@@ -5,7 +5,7 @@
   "scripts": {
     "build": "tsc && cp -r src/data dist/",
     "start:server": "tsx ./src/server.ts",
-    "start:no-sdk": "npx @modelcontextprotocol/inspector tsx C:\\Code\\Live\\day2\\src\\server-no-sdk.ts",
+    "start:no-sdk": "npx @modelcontextprotocol/inspector tsx ./src/server-no-sdk.ts",
     "start:sdk": "npx @modelcontextprotocol/inspector tsx ./src/server-sdk.ts",
     "start:sampling": "npx @modelcontextprotocol/inspector tsx ./src/server-sampling.ts",
     "start:verify-image": "npx @modelcontextprotocol/inspector tsx ./src/verify-image.ts"
