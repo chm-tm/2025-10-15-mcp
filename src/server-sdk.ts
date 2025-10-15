@@ -3,6 +3,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import z from "zod";
 import { loadPoniesFromFile } from "./lib/ponies.js";
 import { buildMany, buildPassword } from "./lib/password.js";
+import { completable } from "@modelcontextprotocol/sdk/server/completable.js";
 
 const server = new McpServer({ name: "pony-sdk", version: "0.1.0" });
 
@@ -47,6 +48,38 @@ server.registerTool(
         structuredContent: { result: pwds } 
     };
   }
+);
+
+server.registerPrompt(
+  "make-pony-password",
+  {
+    title: "Pony-Passwort erstellen",
+    description: "Prompt zum Erzeugen eines Passworts aus MLP-Charakternamen",
+    argsSchema: {
+      minLength: completable(z.string(), (val) =>
+        [8, 12, 16, 20, 24, 32].filter(n => String(n).startsWith(String(val ?? ""))).map(String)
+      ),
+      special: completable(z.string(), (val) => {
+        const opts = ["true", "false"];
+        return opts.filter(s => s.startsWith(String(val ?? "")));
+      })
+    }
+  },
+  ({ minLength, special }) => ({
+    messages: [
+      {
+        role: "user",
+        content: {
+          type: "text",
+          text:
+`Erzeuge mir ein sicheres Passwort aus My-Little-Pony-Charakternamen.
+- Mindestlänge: ${minLength}
+- Sonderzeichenersetzung aktiv: ${special}
+Regeln für Ersetzungen (falls aktiv): o/O→0, i/I→!, e/E→€, s/S→$.`
+        }
+      }
+    ]
+  })
 );
 
 const transport = new StdioServerTransport();
