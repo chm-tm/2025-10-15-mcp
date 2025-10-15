@@ -1,7 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import z from "zod";
-import { loadPoniesFromFile } from "./lib/ponies.js";
+import { loadPoniesFromFile, toOnePerLine } from "./lib/ponies.js";
 import { buildMany, buildPassword } from "./lib/password.js";
 import { completable } from "@modelcontextprotocol/sdk/server/completable.js";
 
@@ -80,6 +80,21 @@ Regeln für Ersetzungen (falls aktiv): o/O→0, i/I→!, e/E→€, s/S→$.`
       }
     ]
   })
+);
+
+server.registerResource(
+  "pony-characters-text",
+  "pony://characters.txt",
+  {
+    title: "MLP-Charaktere (Text)",
+    description: "Ein Name pro Zeile aus data/ponies.txt (CamelCase, ohne Leerzeichen im Nachnamen).",
+    mimeType: "text/plain; charset=utf-8"
+  },
+  (uri) => {
+    const ponies = loadPoniesFromFile(); 
+    const text = toOnePerLine(ponies);
+    return { contents: [{ uri: uri.href, text }] };
+  }
 );
 
 const transport = new StdioServerTransport();
