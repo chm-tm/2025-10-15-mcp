@@ -1,0 +1,9 @@
+{
+    "chat.mcp.serverSampling": {
+        "2025-10-15-mcp/.vscode/mcp.json: Pony Generator (No SDK)": {
+            "allowedModels": [
+                "copilot/gpt-4.1"
+            ]
+        }
+    }
+}
